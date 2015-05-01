@@ -57,7 +57,7 @@
           description="execute multi-dpi add-on build">
     <!-- preparations -->
     <property environment="env"/>
-    <property name="file.name.multi" value="${build.dir}/Slim_gapps_ADD-ON-5.1-MULTI_DPI-${build.today}.zip"/>
+    <property name="file.name.multi" value="${build.dir}/Slim_ADD-ON-5.1-MULTI_DPI-${build.today}.zip"/>
     <delete dir="${work.dir}"/>
     <propertyfile file="${build.dir}/gapps.filenames">
       <entry  key="multifilename" value="${file.name.multi}"/>
