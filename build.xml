@@ -22,113 +22,112 @@
 <!--                                                                         -->
 <!--=========================================================================-->
 <project name="buildGapps"
-         default="buildAll"
-         basedir=".">
-  <description>
-    This file list is used by ant to build the Slim Gapps project
-  </description>
+        default="buildAll"
+        basedir=".">
+    <description>
+        This file list is used by ant to build the Slim Gapps project
+    </description>
 
-  <!--=======================================================================-->
-  <!-- some variables                                                        -->
-  <!--=======================================================================-->
-  <property name="app.name"                     value="buildGapps"/>
-  <property name="app.dir"                      value="${basedir}"/>
-  <property name="work.dir"                     value="${app.dir}/work"/>
-  <property name="build.dir"                    value="${app.dir}/build"/>
-  <property name="structure.dir"                value="${app.dir}/structure"/>
-  <property name="sign.jar"                     value="${app.dir}/tools/signapk.jar"/>
-  <property name="sign.pem"                     value="${app.dir}/tools/testkey.x509.pem"/>
-  <property name="sign.pk8"                     value="${app.dir}/tools/testkey.pk8"/>
-  <tstamp>  
-    <format property="build.today" pattern="yyyyMMdd" />
-  </tstamp>  
-    
-  <!--=======================================================================-->
-  <!-- complete build                                                        -->
-  <!--=======================================================================-->
-  <target name="buildAll"
-        depends="cleanupBefore,initit,buildMulti,cleanupAfter"
-          description="execute complete build"/>
+    <!--=======================================================================-->
+    <!-- some variables                                                        -->
+    <!--=======================================================================-->
+    <property name="app.name"                     value="buildGapps"/>
+    <property name="app.dir"                      value="${basedir}"/>
+    <property name="work.dir"                     value="${app.dir}/work"/>
+    <property name="build.dir"                    value="${app.dir}/build"/>
+    <property name="structure.dir"                value="${app.dir}/structure"/>
+    <property name="sign.jar"                     value="${app.dir}/tools/signapk.jar"/>
+    <property name="sign.pem"                     value="${app.dir}/tools/testkey.x509.pem"/>
+    <property name="sign.pk8"                     value="${app.dir}/tools/testkey.pk8"/>
+    <tstamp>  
+        <format property="build.today" pattern="yyyyMMdd"/>
+    </tstamp>  
 
-  <!--=======================================================================-->
-  <!-- multi-dpi add-on                                                      -->
-  <!--=======================================================================-->
-  <target name="buildMulti"
-          description="execute multi-dpi add-on build">
-    <!-- preparations -->
-    <property environment="env"/>
-    <property name="file.name.multi" value="${build.dir}/Slim_ADD-ON-5.1-MULTI_DPI-${build.today}.zip"/>
-    <delete dir="${work.dir}"/>
-    <propertyfile file="${build.dir}/gapps.filenames">
-      <entry  key="multifilename" value="${file.name.multi}"/>
-    </propertyfile>
-    <!-- copy files -->
-    <copy todir="${work.dir}">
-        <fileset dir="${structure.dir}">
-          <include name="META-INF/**" />
-          <include name="system/**" />
-        </fileset>
-    </copy>
+    <!--=======================================================================-->
+    <!-- complete build                                                        -->
+    <!--=======================================================================-->
+    <target name="buildAll"
+            depends="cleanupBefore,initit,buildMulti,cleanupAfter"
+            description="execute complete build"/>
 
-    <!-- zip and sign it --> 
-    <antcall target="ZipAndSigning">
-        <param name="hfile.name" value="${file.name.multi}"/>
-    </antcall>
+    <!--=======================================================================-->
+    <!-- multi-dpi add-on                                                      -->
+    <!--=======================================================================-->
+    <target name="buildMulti"
+            description="execute multi-dpi add-on build">
+        <!-- preparations -->
+        <property environment="env"/>
+        <property name="file.name.multi" value="${build.dir}/Slim_ADD-ON-5.1-MULTI_DPI-${build.today}.zip"/>
+        <delete dir="${work.dir}"/>
+        <propertyfile file="${build.dir}/gapps.filenames">
+            <entry key="multifilename" value="${file.name.multi}"/>
+        </propertyfile>
+        <!-- copy files -->
+        <copy todir="${work.dir}">
+            <fileset dir="${structure.dir}">
+                <include name="META-INF/**"/>
+                <include name="system/**"/>
+            </fileset>
+        </copy>
 
-  </target>
+        <!-- zip and sign it --> 
+        <antcall target="ZipAndSigning">
+            <param name="hfile.name" value="${file.name.multi}"/>
+        </antcall>
 
-  <!--=======================================================================-->
-  <!-- zip and sign it                                                       -->
-  <!--=======================================================================-->
-  <target name="ZipAndSigning">
-     <zip destfile="${build.dir}/unsigned.zip" basedir="${work.dir}"></zip>
-     <echo message="Signing gapps"/>
-     <java dir="${build.dir}" fork="true" failonerror="true" maxmemory="1536m" jar="${sign.jar}">
-      <arg value="-w"/>
-      <arg value="${sign.pem}"/>
-      <arg value="${sign.pk8}"/>
-      <arg value="${build.dir}/unsigned.zip"/>
-      <arg value="${hfile.name}"/>
-     </java>
-  </target>
+    </target>
 
-  <!--=======================================================================-->
-  <!-- cleanupBefore new build                                               -->
-  <!--=======================================================================-->
-  <target name="cleanupBefore"
-      description="delete old directories">
-      <delete dir="${build.dir}"/>
-      <delete dir="${work.dir}"/>
-  </target>
+    <!--=======================================================================-->
+    <!-- zip and sign it                                                       -->
+    <!--=======================================================================-->
+    <target name="ZipAndSigning">
+        <zip destfile="${build.dir}/unsigned.zip" basedir="${work.dir}"/>
+        <echo message="Signing gapps"/>
+        <java dir="${build.dir}" fork="true" failonerror="true" maxmemory="1536m" jar="${sign.jar}">
+            <arg value="-w"/>
+            <arg value="${sign.pem}"/>
+            <arg value="${sign.pk8}"/>
+            <arg value="${build.dir}/unsigned.zip"/>
+            <arg value="${hfile.name}"/>
+        </java>
+    </target>
 
-  <!--=======================================================================-->
-  <!-- cleanupAfter build is done                                            -->
-  <!--=======================================================================-->
-  <target name="cleanupAfter"
-      description="delete unnecessary build files">
-      <echo message="Cleaning up"/>
-      <delete file="${build.dir}/unsigned.zip"/>
-      <delete file="${build.dir}/gapps.filenames"/>
-  </target>
+    <!--=======================================================================-->
+    <!-- cleanupBefore new build                                               -->
+    <!--=======================================================================-->
+    <target name="cleanupBefore"
+            description="delete old directories">
+        <delete dir="${build.dir}"/>
+        <delete dir="${work.dir}"/>
+    </target>
 
-  <!--=======================================================================-->
-  <!-- initiating build                                                      -->
-  <!--=======================================================================-->
-  <target name ="initit"
-      description="initiating-steps">
-      <mkdir dir="${build.dir}"/>
-      <mkdir dir="${work.dir}"/>
-  </target>
+    <!--=======================================================================-->
+    <!-- cleanupAfter build is done                                            -->
+    <!--=======================================================================-->
+    <target name="cleanupAfter"
+            description="delete unnecessary build files">
+        <echo message="Cleaning up"/>
+        <delete file="${build.dir}/unsigned.zip"/>
+        <delete file="${build.dir}/gapps.filenames"/>
+    </target>
 
-  <!--=======================================================================-->
-  <!-- test build                                                            -->
-  <!--=======================================================================-->
-  <target name ="testit"
-      description="testtest">
-      <echo message="${x.dir}"/>
-      <property name="x.dir" value="test9899"/>
-      <echo message="${x.dir}"/>
-  </target>
-    
-    
+    <!--=======================================================================-->
+    <!-- initiating build                                                      -->
+    <!--=======================================================================-->
+    <target name ="initit"
+            description="initiating-steps">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${work.dir}"/>
+    </target>
+
+    <!--=======================================================================-->
+    <!-- test build                                                            -->
+    <!--=======================================================================-->
+    <target name ="testit"
+            description="testtest">
+        <echo message="${x.dir}"/>
+        <property name="x.dir" value="test9899"/>
+        <echo message="${x.dir}"/>
+    </target>
+
 </project>
