@@ -66,6 +66,8 @@
         <copy todir="${work.dir}">
             <fileset dir="${structure.dir}">
                 <include name="META-INF/**"/>
+                <include name="dynamic/**"/>
+                <include name="dynamic.sh"/>
                 <include name="system/**"/>
             </fileset>
         </copy>
