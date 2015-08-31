@@ -68,6 +68,7 @@
                 <include name="META-INF/**"/>
                 <include name="dynamic/**"/>
                 <include name="dynamic.sh"/>
+                <include name="duh.sh"/>
                 <include name="system/**"/>
             </fileset>
         </copy>
